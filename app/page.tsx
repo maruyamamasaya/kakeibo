@@ -130,8 +130,11 @@ export default function Home() {
             <span>メモ</span>
             <span>編集</span>
           </div>
-          {transactions.map((tx) => (
-            <div key={`${tx.date}-${tx.category}`} className="table-row">
+          {transactions.map((tx, index) => (
+            <div
+              key={`${tx.date}-${tx.category}-${tx.amount}-${tx.note}-${index}`}
+              className="table-row"
+            >
               <span>{tx.date}</span>
               <span className={tx.type === "収入" ? "tag income" : "tag expense"}>
                 {tx.type}

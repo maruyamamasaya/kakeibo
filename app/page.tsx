@@ -2,7 +2,24 @@
 
 import { useMemo, useState } from "react";
 
-const categories = ["食費", "交通", "日用品", "住居", "サブスク", "交際"];
+type CategorySummary = {
+  name: string;
+  amount: string;
+  rate: string;
+};
+
+type Transaction = {
+  id: string;
+  date: string;
+  amount: number;
+  type: "income" | "expense";
+  category: string;
+  note: string;
+  payer: string;
+};
+
+const categorySummary: CategorySummary[] = [];
+const popularCategories: string[] = [];
 
 const calendarDays = Array.from({ length: 31 }, (_, index) => {
   const day = index + 1;
@@ -11,98 +28,7 @@ const calendarDays = Array.from({ length: 31 }, (_, index) => {
   return { day, date };
 });
 
-const transactions = [
-  {
-    id: "tx-001",
-    date: "2026-01-02",
-    amount: 520,
-    type: "expense",
-    category: "食費",
-    note: "朝食",
-    payer: "yui",
-  },
-  {
-    id: "tx-002",
-    date: "2026-01-02",
-    amount: 1800,
-    type: "expense",
-    category: "日用品",
-    note: "洗剤・ティッシュ",
-    payer: "yui",
-  },
-  {
-    id: "tx-003",
-    date: "2026-01-03",
-    amount: 6500,
-    type: "income",
-    category: "副収入",
-    note: "ポイント還元",
-    payer: "kei",
-  },
-  {
-    id: "tx-004",
-    date: "2026-01-03",
-    amount: 1200,
-    type: "expense",
-    category: "交通",
-    note: "定期券",
-    payer: "kei",
-  },
-  {
-    id: "tx-005",
-    date: "2026-01-06",
-    amount: 3400,
-    type: "expense",
-    category: "住居",
-    note: "共益費",
-    payer: "yui",
-  },
-  {
-    id: "tx-006",
-    date: "2026-01-09",
-    amount: 980,
-    type: "expense",
-    category: "食費",
-    note: "ランチ",
-    payer: "kei",
-  },
-  {
-    id: "tx-007",
-    date: "2026-01-09",
-    amount: 2800,
-    type: "income",
-    category: "振込",
-    note: "精算",
-    payer: "yui",
-  },
-  {
-    id: "tx-008",
-    date: "2026-01-13",
-    amount: 2100,
-    type: "expense",
-    category: "サブスク",
-    note: "動画配信",
-    payer: "kei",
-  },
-  {
-    id: "tx-009",
-    date: "2026-01-18",
-    amount: 4800,
-    type: "expense",
-    category: "交際",
-    note: "家族ディナー",
-    payer: "yui",
-  },
-  {
-    id: "tx-010",
-    date: "2026-01-25",
-    amount: 32000,
-    type: "income",
-    category: "給与",
-    note: "振込",
-    payer: "kei",
-  },
-];
+const transactions: Transaction[] = [];
 
 export default function Home() {
   const [selectedDate, setSelectedDate] = useState("2026-01-09");
@@ -179,7 +105,7 @@ export default function Home() {
             <span>支出全体</span>
           </div>
           <div className="chart-legend">
-            {categories.map((category) => (
+            {categorySummary.map((category) => (
               <div key={category.name} className="legend-row">
                 <span className="dot" />
                 <div>
@@ -278,7 +204,7 @@ export default function Home() {
       <section className="card">
         <h2>よく使うカテゴリ</h2>
         <div className="chip-grid">
-          {categories.map((category) => (
+          {popularCategories.map((category) => (
             <span key={category} className="chip">
               {category}
             </span>

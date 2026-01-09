@@ -7,6 +7,8 @@
   --primary: #2f6fed;
   --primary-soft: #e2ebff;
   --border: #e2e8f0;
+  --success: #16a34a;
+  --danger: #ef4444;
 }
 
 * {
@@ -25,14 +27,15 @@ body {
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  padding: 24px 16px 48px;
+  padding: 24px 16px 96px;
 }
 
 .screen {
-  width: min(480px, 100%);
+  width: min(520px, 100%);
   display: flex;
   flex-direction: column;
   gap: 20px;
+  position: relative;
 }
 
 .hero {
@@ -45,41 +48,54 @@ body {
   gap: 16px;
 }
 
+.hero-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .hero h1 {
   font-size: 24px;
   line-height: 1.4;
-  margin: 0;
+  margin: 4px 0 0;
 }
 
-.hero p {
+.hero-note {
   margin: 0;
   color: var(--muted);
   font-size: 14px;
 }
 
-.pill {
-  align-self: flex-start;
+.eyebrow {
+  margin: 0;
   font-size: 12px;
-  padding: 6px 12px;
-  border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary);
   font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--primary);
 }
 
-.actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
+.month-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #fff;
+  border: 1px solid var(--border);
 }
 
 button {
   border: none;
   border-radius: 999px;
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 10px 14px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
+  background: transparent;
 }
 
 .primary {
@@ -94,10 +110,37 @@ button {
   color: var(--text);
 }
 
-.meta {
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.kpi-card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid var(--border);
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.label {
   font-size: 12px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.value {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: 11px;
   color: var(--muted);
 }
 
@@ -116,16 +159,59 @@ button {
   font-size: 18px;
 }
 
-.summary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
-.label {
-  font-size: 12px;
+.muted {
+  margin: 4px 0 0;
   color: var(--muted);
-  margin: 0 0 4px;
+  font-size: 13px;
+}
+
+.chart-area {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+
+.chart-ring {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: conic-gradient(
+    #2f6fed 0 30%,
+    #38bdf8 30% 55%,
+    #f59e0b 55% 70%,
+    #a78bfa 70% 82%,
+    #f97316 82% 92%,
+    #e2e8f0 92% 100%
+  );
+  display: grid;
+  place-items: center;
+  position: relative;
+}
+
+.chart-ring::after {
+  content: "";
+  position: absolute;
+  inset: 20px;
+  background: #fff;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.chart-ring span {
+  position: relative;
+  z-index: 1;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
 }
 
 .caption {
@@ -138,20 +224,28 @@ button {
   font-size: 16px;
   font-weight: 700;
   margin: 0;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-.chip-grid {
+.legend-meta {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.filter-row {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.chip {
-  background: var(--primary-soft);
-  color: var(--primary);
+.pill {
+  font-size: 12px;
   padding: 6px 12px;
   border-radius: 999px;
-  font-size: 12px;
+  background: var(--primary-soft);
+  color: var(--primary);
   font-weight: 600;
 }
 
@@ -355,41 +449,118 @@ button {
   margin: 4px 0 0;
   padding-left: 18px;
   font-size: 13px;
+}
+
+.tag {
+  font-size: 11px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  display: inline-flex;
+  justify-content: center;
+  font-weight: 600;
+}
+
+.tag.income {
+  background: rgba(22, 163, 74, 0.12);
+  color: var(--success);
+}
+
+.tag.expense {
+  background: rgba(239, 68, 68, 0.12);
+  color: var(--danger);
+}
+
+.amount {
+  font-weight: 600;
+}
+
+.note {
   color: var(--muted);
 }
 
-.cta {
-  background: var(--primary);
-  color: #fff;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+.memo-box {
+  background: #f8fafc;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px dashed var(--border);
 }
 
-.cta p {
-  margin: 0;
-  color: #e0e7ff;
+.memo-title {
+  margin: 0 0 8px;
+  font-weight: 600;
   font-size: 13px;
 }
 
-.cta .primary {
+.memo-content {
+  margin: 0;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.bottom-nav {
+  position: sticky;
+  bottom: 12px;
+  align-self: center;
+  width: min(520px, 100%);
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  padding: 8px;
+  border-radius: 999px;
   background: #fff;
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+
+.bottom-nav a {
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 13px;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 999px;
+}
+
+.bottom-nav a.active {
+  background: var(--primary-soft);
   color: var(--primary);
-  box-shadow: none;
+}
+
+@media (max-width: 540px) {
+  .chart-area {
+    grid-template-columns: 1fr;
+    justify-items: center;
+  }
+
+  .table-head,
+  .table-row {
+    grid-template-columns: 56px 56px 64px 80px 1fr 48px;
+  }
 }
 
 @media (max-width: 420px) {
-  .summary-grid {
+  .kpi-grid {
     grid-template-columns: 1fr;
   }
 
-  .actions {
-    grid-template-columns: 1fr;
+  .table-head {
+    display: none;
   }
 
-  .meta {
-    flex-direction: column;
-    gap: 4px;
+  .table-row {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px 12px;
+  }
+
+  .table-row span,
+  .table-row button {
+    justify-self: start;
+  }
+
+  .table-row .note {
+    grid-column: 1 / -1;
   }
 
   .calendar-header {

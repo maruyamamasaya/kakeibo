@@ -143,40 +143,53 @@ export default function Home() {
 
   return (
     <main className="screen">
-      <header className="hero">
-        <div className="pill">モバイルファースト UI</div>
-        <h1>
-          かんたん家計簿で
-          <br />
-          毎日の支出を見える化
-        </h1>
-        <p>
-          Cognitoログインを前提に、家計簿のベース画面だけをシンプルに設計。
-        </p>
-        <div className="actions">
-          <button className="primary">Cognitoでログイン</button>
-          <button className="ghost">デモを見る</button>
+      <header className="hero" id="summary">
+        <div className="hero-top">
+          <div>
+            <p className="eyebrow">家計簿サマリー</p>
+            <h1>2026年1月の収支</h1>
+          </div>
+          <div className="month-switch">
+            <button className="ghost" aria-label="前の月">
+              ◀
+            </button>
+            <span>2026-01</span>
+            <button className="ghost" aria-label="次の月">
+              ▶
+            </button>
+          </div>
         </div>
         <div className="meta">
           <span>次回: カレンダーUI確定</span>
           <span>DB: DynamoDB</span>
+
         </div>
       </header>
 
       <section className="card">
-        <h2>今日のサマリー</h2>
-        <div className="summary-grid">
+        <div className="section-header">
           <div>
-            <p className="label">本日の支出</p>
-            <p className="value">¥2,450</p>
+            <h2>カテゴリ別支出</h2>
+            <p className="muted">MVPは円グラフで構成し、詳細画面で深掘り。</p>
           </div>
-          <div>
-            <p className="label">今月の残り</p>
-            <p className="value">¥38,200</p>
+          <button className="ghost">日別へ切替</button>
+        </div>
+        <div className="chart-area">
+          <div className="chart-ring">
+            <span>支出全体</span>
           </div>
-          <div>
-            <p className="label">予算消化</p>
-            <p className="value">62%</p>
+          <div className="chart-legend">
+            {categories.map((category) => (
+              <div key={category.name} className="legend-row">
+                <span className="dot" />
+                <div>
+                  <p className="legend-title">{category.name}</p>
+                  <p className="legend-meta">
+                    {category.amount} ・ {category.rate}
+                  </p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -319,8 +332,15 @@ export default function Home() {
           <h2>日別集計の体験を確認</h2>
           <p>祝日は後回し。まずは金額の気持ちよさを優先。</p>
         </div>
-        <button className="primary">要件を共有する</button>
       </section>
+
+      <nav className="bottom-nav">
+        <a href="#summary" className="active">
+          サマリー
+        </a>
+        <a href="#details">詳細</a>
+        <a href="#memo">メモ</a>
+      </nav>
     </main>
   );
 }

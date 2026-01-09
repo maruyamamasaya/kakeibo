@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import sampleData from "../data/sample-data.json";
+
 type CategorySummary = {
   name: string;
   amount: string;
@@ -18,20 +20,27 @@ type Transaction = {
   payer: string;
 };
 
-const categorySummary: CategorySummary[] = [];
-const popularCategories: string[] = [];
+const { categorySummary, popularCategories, transactions, month } =
+  sampleData as {
+    month: string;
+    categorySummary: CategorySummary[];
+    popularCategories: string[];
+    transactions: Transaction[];
+  };
 
-const calendarDays = Array.from({ length: 31 }, (_, index) => {
+const [yearText, monthText] = month.split("-");
+const monthLabel = `${yearText}年${Number(monthText)}月`;
+const daysInMonth = new Date(Number(yearText), Number(monthText), 0).getDate();
+const calendarDays = Array.from({ length: daysInMonth }, (_, index) => {
   const day = index + 1;
-  const date = `2026-01-${String(day).padStart(2, "0")}`;
+  const date = `${month}-${String(day).padStart(2, "0")}`;
 
   return { day, date };
 });
 
-const transactions: Transaction[] = [];
-
 export default function Home() {
-  const [selectedDate, setSelectedDate] = useState("2026-01-09");
+  const defaultDate = transactions[0]?.date ?? `${month}-01`;
+  const [selectedDate, setSelectedDate] = useState(defaultDate);
 
   const totalsByDate = useMemo(() => {
     return transactions.reduce(
@@ -55,11 +64,11 @@ export default function Home() {
       },
       {} as Record<string, { income: number; expense: number }>,
     );
-  }, []);
+  }, [transactions]);
 
   const selectedTransactions = useMemo(
     () => transactions.filter((item) => item.date === selectedDate),
-    [selectedDate],
+    [selectedDate, transactions],
   );
 
   const selectedTotals = totalsByDate[selectedDate] ?? {
@@ -73,13 +82,13 @@ export default function Home() {
         <div className="hero-top">
           <div>
             <p className="eyebrow">家計簿サマリー</p>
-            <h1>2026年1月の収支</h1>
+            <h1>{monthLabel}の収支</h1>
           </div>
           <div className="month-switch">
             <button className="ghost" aria-label="前の月">
               ◀
             </button>
-            <span>2026-01</span>
+            <span>{month}</span>
             <button className="ghost" aria-label="次の月">
               ▶
             </button>
@@ -123,7 +132,7 @@ export default function Home() {
       <section className="card">
         <div className="calendar-header">
           <div>
-            <h2>2026年1月</h2>
+            <h2>{monthLabel}</h2>
             <p className="caption">都度集計で日別合計を表示</p>
           </div>
           <div className="calendar-actions">

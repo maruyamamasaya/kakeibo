@@ -1,6 +1,7 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/navigation";
 
 import sampleData from "../data/sample-data.json";
 
@@ -38,9 +39,27 @@ const calendarDays = Array.from({ length: daysInMonth }, (_, index) => {
   return { day, date };
 });
 
+const LOGIN_STORAGE_KEY = "kakeibo:logged-in";
+
 export default function Home() {
+  const router = useRouter();
   const defaultDate = transactions[0]?.date ?? `${month}-01`;
   const [selectedDate, setSelectedDate] = useState(defaultDate);
+  const [isReady, setIsReady] = useState(false);
+
+  useEffect(() => {
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const loggedIn = window.localStorage.getItem(LOGIN_STORAGE_KEY);
+    if (!loggedIn) {
+      router.replace("/login");
+      return;
+    }
+
+    setIsReady(true);
+  }, [router]);
 
   const totalsByDate = useMemo(() => {
     return transactions.reduce(
@@ -75,6 +94,10 @@ export default function Home() {
     income: 0,
     expense: 0,
   };
+
+  if (!isReady) {
+    return null;
+  }
 
   return (
     <main className="screen">

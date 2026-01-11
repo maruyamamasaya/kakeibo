@@ -618,6 +618,15 @@ button,
   font-size: 14px;
 }
 
+.login-error {
+  margin: 0;
+  font-size: 13px;
+  color: #dc2626;
+  background: #fee2e2;
+  border-radius: 999px;
+  padding: 6px 12px;
+}
+
 .login-helper {
   margin: 0;
   font-size: 12px;

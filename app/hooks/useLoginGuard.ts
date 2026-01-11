@@ -3,7 +3,17 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { LOGIN_STORAGE_KEY } from "../lib/auth";
+import { AUTH_COOKIE_KEY } from "../lib/auth";
+
+const hasAuthCookie = () => {
+  if (typeof document === "undefined") {
+    return false;
+  }
+
+  return document.cookie
+    .split("; ")
+    .some((cookie) => cookie.startsWith(`${AUTH_COOKIE_KEY}=`));
+};
 
 export const useLoginGuard = () => {
   const router = useRouter();
@@ -14,8 +24,7 @@ export const useLoginGuard = () => {
       return;
     }
 
-    const loggedIn = window.localStorage.getItem(LOGIN_STORAGE_KEY);
-    if (!loggedIn) {
+    if (!hasAuthCookie()) {
       router.replace("/login");
       return;
     }

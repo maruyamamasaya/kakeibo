@@ -69,7 +69,26 @@ export default function LoginPage() {
     });
 
     if (!response.ok) {
-      throw new Error("トークンの取得に失敗しました。");
+      const contentType = response.headers.get("content-type") ?? "";
+      let details = "";
+
+      if (contentType.includes("application/json")) {
+        const data = (await response.json()) as
+          | { error?: string; error_description?: string }
+          | undefined;
+        if (data?.error || data?.error_description) {
+          details = [data?.error, data?.error_description]
+            .filter(Boolean)
+            .join(": ");
+        }
+      } else {
+        details = (await response.text()).trim();
+      }
+
+      const suffix = details
+        ? ` (${response.status}: ${details})`
+        : ` (${response.status})`;
+      throw new Error(`トークンの取得に失敗しました。${suffix}`);
     }
 
     const tokens = await response.json();

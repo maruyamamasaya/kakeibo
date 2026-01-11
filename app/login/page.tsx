@@ -5,8 +5,10 @@ import { useRouter } from "next/navigation";
 
 const LOGIN_STORAGE_KEY = "kakeibo:logged-in";
 
-const getRedirectPath = () =>
+const getRedirectTarget = () =>
   process.env.NEXT_PUBLIC_LOGIN_REDIRECT_PATH || "/";
+
+const isExternalUrl = (value: string) => /^https?:\/\//i.test(value);
 
 export default function LoginPage() {
   const router = useRouter();
@@ -19,7 +21,7 @@ export default function LoginPage() {
 
     const alreadyLoggedIn = window.localStorage.getItem(LOGIN_STORAGE_KEY);
     if (alreadyLoggedIn) {
-      router.replace(getRedirectPath());
+      router.replace(getRedirectTarget());
     }
   }, [router]);
 
@@ -28,9 +30,17 @@ export default function LoginPage() {
       return;
     }
 
+    const redirectTarget = getRedirectTarget();
+
     setIsSubmitting(true);
     window.localStorage.setItem(LOGIN_STORAGE_KEY, "true");
-    router.push(getRedirectPath());
+
+    if (isExternalUrl(redirectTarget)) {
+      window.location.assign(redirectTarget);
+      return;
+    }
+
+    router.push(redirectTarget);
   };
 
   return (
@@ -50,7 +60,7 @@ export default function LoginPage() {
           {isSubmitting ? "ログイン中..." : "ログインする"}
         </button>
         <p className="login-helper">
-          遷移先: <span>{getRedirectPath()}</span>
+          遷移先: <span>{getRedirectTarget()}</span>
         </p>
       </div>
     </main>

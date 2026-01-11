@@ -9,8 +9,6 @@ import {
   AUTH_VERIFIER_KEY,
   TOKEN_STORAGE_KEY,
   buildCognitoAuthorizeUrl,
-  getCognitoConfig,
-  getCognitoTokenUrl,
   getLoginRedirectTarget,
   isCognitoConfigured,
   isExternalUrl,
@@ -41,7 +39,6 @@ export default function LoginPage() {
   };
 
   const exchangeCodeForTokens = async (code: string, state: string) => {
-    const { clientId, redirectUri } = getCognitoConfig();
     const storedState = window.sessionStorage.getItem(AUTH_STATE_KEY);
     const codeVerifier = window.sessionStorage.getItem(AUTH_VERIFIER_KEY);
 
@@ -53,19 +50,15 @@ export default function LoginPage() {
       throw new Error("認証情報が見つかりません。再度ログインしてください。");
     }
 
-    const body = new URLSearchParams();
-    body.set("grant_type", "authorization_code");
-    body.set("client_id", clientId);
-    body.set("code", code);
-    body.set("redirect_uri", redirectUri);
-    body.set("code_verifier", codeVerifier);
-
-    const response = await fetch(getCognitoTokenUrl(), {
+    const response = await fetch("/api/auth/token", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
+        "Content-Type": "application/json",
       },
-      body: body.toString(),
+      body: JSON.stringify({
+        code,
+        codeVerifier,
+      }),
     });
 
     if (!response.ok) {
